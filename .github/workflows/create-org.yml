@@ -1,0 +1,39 @@
+name: Create new org
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  create-repo:
+    name: Create new repo
+    runs-on: ubuntu-latest
+    if: startsWith(github.event.comment.body, '/create-org') &&
+      contains(github.event.issue.labels.*.name, 'new-org')
+
+    steps:
+      - name: Check out scripts
+        uses: actions/checkout@v3
+
+      - name: Dump GitHub context
+        id: github_context_step
+        run: echo '${{ toJSON(github) }}'
+        
+      - name: Parse issue body
+        id: parse-issue-body
+        uses: actions/github-script@v5
+        with:
+          script: |
+            require('./.github/scripts/parse-issue-body.js')({context, core})
+
+      - run: echo ${{ steps.parse-issue-body.outputs.repo-name }}
+
+      - uses: stefanbuck/github-issue-parser@v2
+        id: issue-parser
+
+      - name: do things
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          echo "new org name = ${{ steps.issue-parser.outputs.issueparser_org_name }}"
+          
