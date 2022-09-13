@@ -34,9 +34,10 @@ jobs:
         with:
           script: |
             let commentBody
-            commentBody = `👋 Thank you for opening this migration issue.
+            commentBody = `👋 Thank you for opening this new org issue.
+
             The following has been parsed from your issue body:
-            The **org name** is set to be: **\`${{ steps.issue-parser.outputs.issueparser_org_name }}\`**
+            - The **org name** is set to be: **\`${{ steps.issue-parser.outputs.issueparser_org_name }}\`**
             `
 
             await github.rest.issues.createComment({
