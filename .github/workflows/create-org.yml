@@ -19,15 +19,6 @@ jobs:
           app-private-key: ${{ secrets.PRIVATE_KEY }} # Private key for the GitHub App that is installed on the repo; e.g.: ${{ secrets.PRIVATE_KEY }}
           team-name: approver-team # The name of the team in GitHub to check for the approval command; e.g.: approver-team
           fail-if-approval-not-found: false # Fail the action (show the action run as red) if the command is not found in the comments from someone in the approver team"
-        
-      - name: Parse issue body
-        id: parse-issue-body
-        uses: actions/github-script@v5
-        with:
-          script: |
-            require('./.github/scripts/parse-issue-body.js')({context, core})
-
-      - run: echo ${{ steps.parse-issue-body.outputs.repo-name }}
 
       - uses: stefanbuck/github-issue-parser@v2
         id: issue-parser
@@ -37,4 +28,3 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           echo "new org name = ${{ steps.issue-parser.outputs.issueparser_org_name }}"
-          
