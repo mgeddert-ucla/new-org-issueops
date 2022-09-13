@@ -66,3 +66,34 @@ jobs:
             # -F advanced_security_enabled_for_new_repositories=true \
             # -F secret_scanning_enabled_for_new_repositories=true \
             # -F secret_scanning_push_protection_enabled_for_new_repositories=true
+
+      - name: Post successful message
+        uses: actions/github-script@v5
+        with:
+          script: |
+            let commentBody
+            commentBody = `🚀 New org created successfully
+
+            Visit the following link for the org: [https://github.com/orgs/${{ steps.issue-parser.outputs.issueparser_org_name }}](https://github.com/orgs/${{ steps.issue-parser.outputs.issueparser_org_name }})
+            `
+
+            await github.rest.issues.createComment({
+              issue_number: ${{ github.event.issue.number }},
+              owner: '${{ github.REPOSITORY_OWNER }}',
+              repo: '${{ github.event.repository.name }}',
+              body: commentBody.replace(/  +/g, '')
+            })
+
+      - name: Post failure message
+        if: ${{ failure() }}
+        uses: actions/github-script@v5
+        with:
+          script: |
+            let commentBody
+            commentBody = `😢 The new org could not be created. Please review the action logs for more information.`
+            await github.rest.issues.createComment({
+              issue_number: ${{ github.event.issue.number }},
+              owner: '${{ github.REPOSITORY_OWNER }}',
+              repo: '${{ github.event.repository.name }}',
+              body: commentBody.replace(/  +/g, '')
+            })
