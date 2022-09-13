@@ -16,6 +16,11 @@ jobs:
       contains(github.event.issue.labels.*.name, 'new-org')
 
     steps:
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: echo "$GITHUB_CONTEXT"
+
       - name: ApproveOps - Approvals in IssueOps
         uses: joshjohanning/approveops@v1
         id: check-approval
@@ -45,15 +50,15 @@ jobs:
             -f default_repository_permission='none' \
             -f members_can_create_repositories=true \
             -f members_allowed_repository_creation_type='private' \
-            -f members_can_create_public_repositories='false' \
-            -f members_can_create_private_repositories='true' \
-            -f members_can_create_internal_repositories='false' \
-            -f members_can_create_public_pages='false' \
-            -f dependabot_alerts_enabled_for_new_repositories='true' \
-            -f dependabot_security_updates_enabled_for_new_repositories='true' \
-            -f dependency_graph_enabled_for_new_repositories='true'
+            -f members_can_create_public_repositories=false \
+            -f members_can_create_private_repositories=true \
+            -f members_can_create_internal_repositories=false \
+            -f members_can_create_public_pages=false \
+            -f dependabot_alerts_enabled_for_new_repositories=true \
+            -f dependabot_security_updates_enabled_for_new_repositories=true \
+            -f dependency_graph_enabled_for_new_repositories=true
 
             # need to have ghas licenses
-            # -f advanced_security_enabled_for_new_repositories='true' \
-            # -f secret_scanning_enabled_for_new_repositories='true' \
-            # -f secret_scanning_push_protection_enabled_for_new_repositories='true'
+            # -f advanced_security_enabled_for_new_repositories=true \
+            # -f secret_scanning_enabled_for_new_repositories=true \
+            # -f secret_scanning_push_protection_enabled_for_new_repositories=true
