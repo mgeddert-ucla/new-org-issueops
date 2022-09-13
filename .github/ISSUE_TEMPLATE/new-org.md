@@ -13,7 +13,7 @@ assignees: ''
 <!-- do not add text between the ### heading and the input -->
 
 <!-- FIELD HELP -->
-<!-- Org Name: Enter in the name of the new organization name
+<!-- Org Name: Enter in the name of the new organization name -->
 
 
 ### Org name
