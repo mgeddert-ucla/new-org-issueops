@@ -4,6 +4,10 @@ on:
   issue_comment:
     types: [created]
 
+env:
+  billing_email: 'test@test.com'
+  enterprise_id: 'MDEwOkVudGVycHJpc2Uy'
+
 jobs:
   create-repo:
     name: Create new org
@@ -12,6 +16,10 @@ jobs:
       contains(github.event.issue.labels.*.name, 'new-org')
 
     steps:
+      - name: Dump GitHub context
+        id: github_context_step
+        run: echo "${{ toJSON(github) }}"
+
       - name: ApproveOps - Approvals in IssueOps
         uses: joshjohanning/approveops@v1
         id: check-approval
@@ -26,11 +34,30 @@ jobs:
 
       - name: do things
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.ADMIN_TOKEN }}
         run: |
           echo "new org name = ${{ steps.issue-parser.outputs.issueparser_org_name }}"
 
-          curl -X POST 'https://api.github.com/graphql' \
+          curl -LX POST 'https://api.github.com/graphql' \
             -H "Authorization: bearer ${{ secrets.ADMIN_TOKEN }}" \
-            --data '{ "query": "mutation ($enterprise_id: ID! $organization_name: String! $admin_logins: [String!]! $billing_email: String!) { createEnterpriseOrganization(input: { enterpriseId: $enterprise_id login: $organization_name billingEmail: $billing_email profileName: $organization_name adminLogins: $admin_logins }) { enterprise { name } organization { id name } } }", "variables":{ "enterprise_id": "MDEwOkVudGVycHJpc2Uy", "organization_name": "${{ steps.issue-parser.outputs.issueparser_org_name }}", "billing_email": "test@test.com", "admin_logins": [ "${{ github.event.issue.user.login }}" ] } }'
+            --data '{ "query": "mutation ($enterprise_id: ID! $organization_name: String! $admin_logins: [String!]! $billing_email: String!) { createEnterpriseOrganization(input: { enterpriseId: $enterprise_id login: $organization_name billingEmail: $billing_email profileName: $organization_name adminLogins: $admin_logins }) { enterprise { name } organization { id name } } }", "variables":{ "enterprise_id": "${{ env.enterprise_id }}", "organization_name": "${{ steps.issue-parser.outputs.issueparser_org_name }}", "billing_email": "${{ env.billing_email }}", "admin_logins": [ "${{ github.event.issue.user.login }}" ] } }'
           
+          gh api \
+            --method PATCH \
+            -H "Accept: application/vnd.github+json" \
+            /orgs/${{ steps.issue-parser.outputs.issueparser_org_name }} \
+            -f default_repository_permission='none' \
+            -f members_can_create_repositories=true \
+            -f members_allowed_repository_creation_type='private' \
+            -f members_can_create_public_repositories='false' \
+            -f members_can_create_private_repositories='true' \
+            -f members_can_create_internal_repositories='false' \
+            -f members_can_create_public_pages='false' \
+            -f dependabot_alerts_enabled_for_new_repositories='true' \
+            -f dependabot_security_updates_enabled_for_new_repositories='true' \
+            -f dependency_graph_enabled_for_new_repositories='true'
+
+            # need to have ghas licenses
+            # -f advanced_security_enabled_for_new_repositories='true' \
+            # -f secret_scanning_enabled_for_new_repositories='true' \
+            # -f secret_scanning_push_protection_enabled_for_new_repositories='true'
