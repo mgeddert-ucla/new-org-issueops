@@ -6,16 +6,12 @@ on:
 
 jobs:
   create-repo:
-    name: Create new repo
+    name: Create new org
     runs-on: ubuntu-latest
     if: startsWith(github.event.comment.body, '/create-org') &&
       contains(github.event.issue.labels.*.name, 'new-org')
 
     steps:
-      - name: Dump GitHub context
-        id: github_context_step
-        run: echo '${{ toJSON(github) }}'
-
       - name: ApproveOps - Approvals in IssueOps
         uses: joshjohanning/approveops@v1
         id: check-approval
