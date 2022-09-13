@@ -67,6 +67,22 @@ jobs:
             # -F secret_scanning_enabled_for_new_repositories=true \
             # -F secret_scanning_push_protection_enabled_for_new_repositories=true
 
+            gh api \
+              --method POST \
+              -H "Accept: application/vnd.github+json" \
+              /orgs/${{ steps.issue-parser.outputs.issueparser_org_name }}/repos \
+              -f name='.github' \
+            -F private=false \
+            -f visibility='public'
+
+            gh api \
+              --method POST \
+              -H "Accept: application/vnd.github+json" \
+              /orgs/${{ steps.issue-parser.outputs.issueparser_org_name }}/repos \
+              -f name='.github-private' \
+            -F private=true \
+            -f visibility='private'
+
       - name: Post successful message
         uses: actions/github-script@v5
         with:
