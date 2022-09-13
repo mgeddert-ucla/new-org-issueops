@@ -20,7 +20,13 @@ jobs:
       # - name: Dump GitHub context
       #   id: github_context_step
       #   run: echo '${{ toJSON(github) }}'
-            
+
+      - name: Dump GitHub context
+        run: echo '${{ toJSON(github.event.issue.user) }}'
+
+      - name: Dump GitHub context
+        run: echo '${{ fromJSON(github.event.issue.user) }}'
+
       - uses: stefanbuck/github-issue-parser@v2
         id: issue-parser
 
@@ -34,8 +40,6 @@ jobs:
             The following has been parsed from your issue body:
             - The **org name** is set to be: **\`${{ steps.issue-parser.outputs.issueparser_org_name }}\`**
             - The **org admin** is set to be: **\`${{ github.event.issue.user.login }}\`**
-            test: ${{ github.event.issue.user.email }}
-            also test: ${{ github.event.issue.user }}
 
             ## Step 1: Approving the request
 
