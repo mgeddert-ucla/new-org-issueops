@@ -1,7 +1,7 @@
 # Parses migration issue and creates a comment with next step
 #
 
-name: New Repo (Prepare)
+name: Prepare
 
 on:
   issues:
@@ -33,6 +33,7 @@ jobs:
 
             The following has been parsed from your issue body:
             - The **org name** is set to be: **\`${{ steps.issue-parser.outputs.issueparser_org_name }}\`**
+            - The **org admin** is set to be: **\`${{ github.event.issue.user.login }}\`**
 
             ## Step 1: Approving the request
 
