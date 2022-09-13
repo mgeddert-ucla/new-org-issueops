@@ -14,12 +14,11 @@ jobs:
     steps:
       - name: ApproveOps - Approvals in IssueOps
         uses: joshjohanning/approveops@v1
-        id: check-approval
         with:
           app-id: 170284 # The GitHub App ID; ie: 170284
           app-private-key: ${{ secrets.PRIVATE_KEY }} # Private key for the GitHub App that is installed on the repo; e.g.: ${{ secrets.PRIVATE_KEY }}
           team-name: approver-team # The name of the team in GitHub to check for the approval command; e.g.: approver-team
-          fail-if-approval-not-found: true # Fail the action (show the action run as red) if the command is not found in the comments from someone in the approver team"
+          fail-if-approval-not-found: false # Fail the action (show the action run as red) if the command is not found in the comments from someone in the approver team"
         
       - name: Parse issue body
         id: parse-issue-body
