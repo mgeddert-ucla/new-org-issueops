@@ -24,7 +24,7 @@ jobs:
         run: echo "$GITHUB_CONTEXT"
 
       - name: ApproveOps - Approvals in IssueOps
-        uses: joshjohanning/approveops@4-incorrectly-comment-marking-the-workflow-run-as-failed
+        uses: joshjohanning/approveops@4-test
         id: check-approval
         with:
           app-id: 170284 # The GitHub App ID; ie: 170284
