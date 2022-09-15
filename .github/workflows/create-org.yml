@@ -107,12 +107,12 @@ jobs:
             
             echo "commit and push the readme's"
             cd ./.github
-            git add README.md
+            git add ./profile/README.md
             git commit -m "adding readme"
             git push --set-upstream origin main
             
             cd ./../.github-private
-            git add README.md
+            git add ./profile/README.md
             git commit -m "adding readme"
             git push --set-upstream origin main
             
