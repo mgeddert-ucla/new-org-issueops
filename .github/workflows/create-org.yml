@@ -101,7 +101,7 @@ jobs:
             git clone https://github-actions:${{ secrets.ADMIN_TOKEN }}@github.com/${{ steps.issue-parser.outputs.issueparser_org_name }}/.github-private.git
             
             echo "copy in base readme's"
-            # mkdir ./.github/profile && mkdir ./.github-private/profile
+            mkdir ./.github/profile && mkdir ./.github-private/profile
             mv ./../src/.github/README.md ./.github/profile/README.md
             mv ./../src/.github-private/README.md ./.github-private/profile/README.md
             
