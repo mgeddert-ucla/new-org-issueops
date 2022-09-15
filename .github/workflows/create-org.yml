@@ -88,17 +88,20 @@ jobs:
             
             # set git config
             echo "setting git config"
-            git config --local user.name 'github-actions[bot]'
-            git config --local user.email 'github-actions[bot]@users.noreply.github.com'
+            git config --global user.name 'github-actions[bot]'
+            git config --global user.email 'github-actions[bot]@users.noreply.github.com'
             
             # init and push readme's
+            echo "create new directory and clone the repos"
             mkdir github-repos && cd github-repos
             git clone https://github-actions:${{ secrets.ADMIN_TOKEN }}@github.com/${{ steps.issue-parser.outputs.issueparser_org_name }}/.github.git
             git clone https://github-actions:${{ secrets.ADMIN_TOKEN }}@github.com/${{ steps.issue-parser.outputs.issueparser_org_name }}/.github-private.git
             
+            echo "copy in base readme's"
             mv ./../src/.github/README.md ./.github/README.md
             mv ./../src/.github-private/README.md ./.github-private/README.md
             
+            echo "commit and push the readme's"
             cd ./.github
             git add README.md
             git commit -m "adding readme"
