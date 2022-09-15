@@ -93,8 +93,8 @@ jobs:
             
             # init and push readme's
             mkdir github-repos && cd github-repos
-            git clone https://github.com/orgs/${{ steps.issue-parser.outputs.issueparser_org_name }}/.github.git
-            git clone https://github.com/orgs/${{ steps.issue-parser.outputs.issueparser_org_name }}/.github-private.git
+            git clone https://github.com/${{ steps.issue-parser.outputs.issueparser_org_name }}/.github.git
+            git clone https://github.com/${{ steps.issue-parser.outputs.issueparser_org_name }}/.github-private.git
             
             mv ./../src/.github/README.md ./.github/README.md
             mv ./../src/.github-private/README.md ./.github-private/README.md
@@ -132,7 +132,7 @@ jobs:
         with:
           script: |
             let commentBody
-            commentBody = `😢 The new org could not be created. Please review the action logs for more information.`
+            commentBody = `😢 The new org could not be created. Please review the [action logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) for more information.`
             await github.rest.issues.createComment({
               issue_number: ${{ github.event.issue.number }},
               owner: '${{ github.REPOSITORY_OWNER }}',
