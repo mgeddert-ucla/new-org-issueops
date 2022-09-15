@@ -101,8 +101,8 @@ jobs:
             git clone https://github-actions:${{ secrets.ADMIN_TOKEN }}@github.com/${{ steps.issue-parser.outputs.issueparser_org_name }}/.github-private.git
             
             echo "copy in base readme's"
-            mv ./../src/.github/README.md ./.github/README.md
-            mv ./../src/.github-private/README.md ./.github-private/README.md
+            mv ./../src/.github/profile/README.md ./.github/README.md
+            mv ./../src/.github-private/profile/README.md ./.github-private/README.md
             
             echo "commit and push the readme's"
             cd ./.github
