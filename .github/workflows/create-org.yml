@@ -45,10 +45,12 @@ jobs:
 
           # create the org
           # commented out for now
+          # echo "create the org"
           # curl -LX POST 'https://api.github.com/graphql' \
           #   -H "Authorization: bearer ${{ secrets.ADMIN_TOKEN }}" \
           #   --data '{ "query": "mutation ($enterprise_id: ID! $organization_name: String! $admin_logins: [String!]! $billing_email: String!) { createEnterpriseOrganization(input: { enterpriseId: $enterprise_id login: $organization_name billingEmail: $billing_email profileName: $organization_name adminLogins: $admin_logins }) { enterprise { name } organization { id name } } }", "variables":{ "enterprise_id": "${{ env.enterprise_id }}", "organization_name": "${{ steps.issue-parser.outputs.issueparser_org_name }}", "billing_email": "${{ env.billing_email }}", "admin_logins": [ "${{ github.event.issue.user.login }}" ] } }'
           
+          echo "updating the org"
           gh api \
             --method PATCH \
             -H "Accept: application/vnd.github+json" \
@@ -70,21 +72,22 @@ jobs:
             # -F secret_scanning_push_protection_enabled_for_new_repositories=true
             
             # create .github and .github-private repos
-            # gh api \
-            #   --method POST \
-            #   -H "Accept: application/vnd.github+json" \
-            #   /orgs/${{ steps.issue-parser.outputs.issueparser_org_name }}/repos \
-            #   -f name='.github' \
-            # -F private=false \
-            # -f visibility='public'
+            echo "creating .github and .github-private repos"
+            gh api \
+              --method POST \
+              -H "Accept: application/vnd.github+json" \
+              /orgs/${{ steps.issue-parser.outputs.issueparser_org_name }}/repos \
+              -f name='.github' \
+              -F private=false \
+              -f visibility='public'
 
-            # gh api \
-            #   --method POST \
-            #   -H "Accept: application/vnd.github+json" \
-            #   /orgs/${{ steps.issue-parser.outputs.issueparser_org_name }}/repos \
-            #   -f name='.github-private' \
-            # -F private=true \
-            # -f visibility='private'
+            gh api \
+              --method POST \
+              -H "Accept: application/vnd.github+json" \
+              /orgs/${{ steps.issue-parser.outputs.issueparser_org_name }}/repos \
+              -f name='.github-private' \
+              -F private=true \
+              -f visibility='private'
             
             # set git config
             echo "setting git config"
