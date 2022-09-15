@@ -38,6 +38,7 @@ jobs:
         id: issue-parser
 
       - name: do things
+        if: ${{ steps.check-approval.outputs.approved == 'true' }}
         env:
           GH_TOKEN: ${{ secrets.ADMIN_TOKEN }}
         run: |
@@ -123,6 +124,7 @@ jobs:
 
       - name: Post successful message
         uses: actions/github-script@v5
+        if: ${{ success() && steps.check-approval.outputs.approved == 'true' }}
         with:
           script: |
             let commentBody
@@ -139,7 +141,7 @@ jobs:
             })
 
       - name: Post failure message
-        if: ${{ failure() }}
+        if: ${{ failure() && steps.check-approval.outputs.approved == 'true' }}
         uses: actions/github-script@v5
         with:
           script: |
