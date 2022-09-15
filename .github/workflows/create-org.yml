@@ -93,7 +93,7 @@ jobs:
             
             # init and push readme's
             echo "create new directory and clone the repos"
-            mkdir github-repos && cd github-repos
+            mkdir ./github-repos && cd ./github-repos
             git clone https://github-actions:${{ secrets.ADMIN_TOKEN }}@github.com/${{ steps.issue-parser.outputs.issueparser_org_name }}/.github.git
             git clone https://github-actions:${{ secrets.ADMIN_TOKEN }}@github.com/${{ steps.issue-parser.outputs.issueparser_org_name }}/.github-private.git
             
@@ -111,6 +111,9 @@ jobs:
             git add README.md
             git commit -m "adding readme"
             git push --set-upstream origin main
+            
+            echo "cleanup"
+            cd ./../../ && rm -rf ./github-repos
 
       - name: Post successful message
         uses: actions/github-script@v5
