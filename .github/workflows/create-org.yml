@@ -16,6 +16,8 @@ jobs:
       contains(github.event.issue.labels.*.name, 'new-org')
 
     steps:
+      - uses: actions/checkout@v3
+      
       - name: Dump GitHub context
         env:
           GITHUB_CONTEXT: ${{ toJSON(github) }}
@@ -66,22 +68,45 @@ jobs:
             # -F advanced_security_enabled_for_new_repositories=true \
             # -F secret_scanning_enabled_for_new_repositories=true \
             # -F secret_scanning_push_protection_enabled_for_new_repositories=true
+            
+            # create .github and .github-private repos
+            # gh api \
+            #   --method POST \
+            #   -H "Accept: application/vnd.github+json" \
+            #   /orgs/${{ steps.issue-parser.outputs.issueparser_org_name }}/repos \
+            #   -f name='.github' \
+            # -F private=false \
+            # -f visibility='public'
 
-            gh api \
-              --method POST \
-              -H "Accept: application/vnd.github+json" \
-              /orgs/${{ steps.issue-parser.outputs.issueparser_org_name }}/repos \
-              -f name='.github' \
-            -F private=false \
-            -f visibility='public'
-
-            gh api \
-              --method POST \
-              -H "Accept: application/vnd.github+json" \
-              /orgs/${{ steps.issue-parser.outputs.issueparser_org_name }}/repos \
-              -f name='.github-private' \
-            -F private=true \
-            -f visibility='private'
+            # gh api \
+            #   --method POST \
+            #   -H "Accept: application/vnd.github+json" \
+            #   /orgs/${{ steps.issue-parser.outputs.issueparser_org_name }}/repos \
+            #   -f name='.github-private' \
+            # -F private=true \
+            # -f visibility='private'
+            
+            # set git config
+            git config --local user.name 'github-actions[bot]'
+            git config --local user.email 'github-actions[bot]@users.noreply.github.com'
+            
+            # init and push readme's
+            mkdir github-repos
+            git clone https://github.com/orgs/${{ steps.issue-parser.outputs.issueparser_org_name }}/.github.git
+            git clone https://github.com/orgs/${{ steps.issue-parser.outputs.issueparser_org_name }}/.github-private.git
+            
+            mv ./../src/.github/README.md ./.github/README.md
+            mv ./../src/.github-private/README.md ./.github-private/README.md
+            
+            cd ./.github
+            git add README.md
+            git commit -m "adding readme"
+            git push --set-upstream origin main
+            
+            cd ./../.github-private
+            git add README.md
+            git commit -m "adding readme"
+            git push --set-upstream origin main
 
       - name: Post successful message
         uses: actions/github-script@v5
