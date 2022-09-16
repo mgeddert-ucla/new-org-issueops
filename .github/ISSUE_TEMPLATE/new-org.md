@@ -1,7 +1,7 @@
 ---
 name: New Org
 about: Create a new org
-title: 'New Org - <enter-org-name-here>'
+title: 'New Org:
 labels: 'new-org'
 assignees: ''
 
@@ -9,7 +9,6 @@ assignees: ''
 
 <!-- INSTRUCTIONS -->
 <!-- fill out the information under each of the "###" headings -->
-<!-- do not change the headings, ticks, or code blocks -->
 <!-- do not add text between the ### heading and the input -->
 
 <!-- FIELD HELP -->
