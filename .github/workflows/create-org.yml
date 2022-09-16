@@ -1,3 +1,11 @@
+# Secrets to create:
+# 1. PRIVATE_KEY - from app
+# 2. ADMIN_TOKEN - with admin:enterprise scope
+#
+# Also update the values in the env section below
+#
+# Create a 'new-org' issue label
+
 name: Create new org
 
 on:
@@ -6,7 +14,8 @@ on:
 
 env:
   billing_email: 'test@test.com'
-  enterprise_id: 'MDEwOkVudGVycHJpc2Uy'
+  enterprise_id: 'MDEwOkVudGVycHJpc2Uy' # use this to get your ID = https://github.com/joshjohanning/github-misc-scripts/blob/main/gh-cli/get-enterprise-id.sh
+  approver_team: 'approver-team'
 
 jobs:
   create-repo:
@@ -29,7 +38,7 @@ jobs:
         with:
           app-id: 170284 # The GitHub App ID; ie: 170284
           app-private-key: ${{ secrets.PRIVATE_KEY }} # Private key for the GitHub App that is installed on the repo; e.g.: ${{ secrets.PRIVATE_KEY }}
-          team-name: approver-team # The name of the team in GitHub to check for the approval command; e.g.: approver-team
+          team-name: ${{ env.approver_team }} # The name of the team in GitHub to check for the approval command; e.g.: approver-team
           fail-if-approval-not-found: true # Fail the action (show the action run as red) if the command is not found in the comments from someone in the approver team
           post-successful-approval-comment: false # whether to post approved message or not
 
@@ -46,11 +55,10 @@ jobs:
           echo "org billing email = ${{ env.billing_email }}"
 
           # create the org
-          # commented out for now
-          # echo "create the org"
-          # curl -LX POST 'https://api.github.com/graphql' \
-          #   -H "Authorization: bearer ${{ secrets.ADMIN_TOKEN }}" \
-          #   --data '{ "query": "mutation ($enterprise_id: ID! $organization_name: String! $admin_logins: [String!]! $billing_email: String!) { createEnterpriseOrganization(input: { enterpriseId: $enterprise_id login: $organization_name billingEmail: $billing_email profileName: $organization_name adminLogins: $admin_logins }) { enterprise { name } organization { id name } } }", "variables":{ "enterprise_id": "${{ env.enterprise_id }}", "organization_name": "${{ steps.issue-parser.outputs.issueparser_org_name }}", "billing_email": "${{ env.billing_email }}", "admin_logins": [ "${{ github.event.issue.user.login }}" ] } }'
+          echo "create the org"
+          curl -LX POST 'https://api.github.com/graphql' \
+            -H "Authorization: bearer ${{ secrets.ADMIN_TOKEN }}" \
+            --data '{ "query": "mutation ($enterprise_id: ID! $organization_name: String! $admin_logins: [String!]! $billing_email: String!) { createEnterpriseOrganization(input: { enterpriseId: $enterprise_id login: $organization_name billingEmail: $billing_email profileName: $organization_name adminLogins: $admin_logins }) { enterprise { name } organization { id name } } }", "variables":{ "enterprise_id": "${{ env.enterprise_id }}", "organization_name": "${{ steps.issue-parser.outputs.issueparser_org_name }}", "billing_email": "${{ env.billing_email }}", "admin_logins": [ "${{ github.event.issue.user.login }}" ] } }'
           
           echo "updating the org"
           gh api \
